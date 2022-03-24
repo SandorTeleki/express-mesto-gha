@@ -52,6 +52,7 @@ const updateUserProfile = (req, res) => {
     new: true,
     runValidators: true,
   })
+    .orFail(`Ошибка, статус ${ERR_NOT_FOUND}`)
     .then((user) => {
       res.send(user);
     })
@@ -67,7 +68,11 @@ const updateUserAvatar = (req, res) => {
   if (!avatar) {
     return res.status(ERR_INCORRECT_DATA).send({ message: `Ошибка, статус ${ERR_INCORRECT_DATA}. Переданы некорректные данные.` });
   }
-  User.findByIdAndUpdate(id, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(id, { avatar }, {
+    new: true,
+    runValidators: true,
+  })
+    .orFail(`Ошибка, статус ${ERR_NOT_FOUND}`)
     .then((user) => {
       res.send(user);
     })
