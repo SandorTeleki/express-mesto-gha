@@ -1,5 +1,5 @@
-const ERR_NOT_FOUND = 404;
 const ERR_INCORRECT_DATA = 400;
+const ERR_NOT_FOUND = 404;
 const ERR_SERVER_ERROR = 500;
 
 const throwErrors = (err, res, message) => {
