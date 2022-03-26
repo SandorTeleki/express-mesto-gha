@@ -11,9 +11,6 @@ const getUsers = (req, res) => {
     .then((users) => {
       res.send(users);
     })
-    .orFail(() => {
-      throw new NotFoundError('Пользователь не найден');
-    })
     .catch(() => {
       res.status(ERR_SERVER_ERROR)
         .send({ message: `Ошибка ${ERR_SERVER_ERROR}. Ошибка сервера.` });
@@ -23,9 +20,6 @@ const getUsers = (req, res) => {
 const getUserById = (req, res) => {
   const { id } = req.params;
   User.findById(id)
-    .orFail(() => {
-      throw new NotFoundError('Пользователь не найден');
-    })
     .then((user) => {
       if (!user) {
         return res.status(ERR_NOT_FOUND)
