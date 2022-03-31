@@ -1,19 +1,18 @@
 const Card = require('../models/card');
-const { ERR_NOT_FOUND, throwErrors } = require('../utils');
+const NotFoundError = require('../errors/NotFoundError');
+const ForbiddenError = require('../errors/ForbiddenError');
 
-const message = 'Карточка не найдена с указанным id.';
-
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
       res.send(cards);
     })
     .catch((err) => {
-      throwErrors(err, res, message);
+      next(err);
     });
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
@@ -21,25 +20,28 @@ const createCard = (req, res) => {
       res.send(card);
     })
     .catch((err) => {
-      throwErrors(err, res, message);
+      next(err);
     });
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  Card.findByIdAndRemove(cardId)
+  const ownerId = req.user._id;
+  Card.findById(cardId)
+    .orFail(() => next(new NotFoundError('Карточка не найдена с указанным id.')))
     .then((card) => {
-      if (!card) {
-        return res.status(ERR_NOT_FOUND).send({ message: `Ошибка статус ${ERR_NOT_FOUND}. ${message}.` });
+      if (!card.owner.equals(ownerId)) {
+        return next(new ForbiddenError('Нельзя удалить чужую карточку.'));
       }
-      res.send({ message: 'Пост удален.' });
+      return card.remove()
+        .then(() => {
+          res.send({ message: 'Карточка удалена.' });
+        });
     })
-    .catch((err) => {
-      throwErrors(err, res, message);
-    });
+    .catch(next);
 };
 
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   const { cardId } = req.params;
   Card.findByIdAndUpdate(
     cardId,
@@ -48,28 +50,29 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(ERR_NOT_FOUND).send({ message: `Ошибка, статус ${ERR_NOT_FOUND}. ${message}.` });
+        throw new NotFoundError('Карточка не найдена с указанным id.');
       }
       res.send(card);
     })
     .catch((err) => {
-      throwErrors(err, res, message);
+      next(err);
     });
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   const { cardId } = req.params;
   Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        return res.status(ERR_NOT_FOUND).send({ message: `Ошибка, статус ${ERR_NOT_FOUND}. ${message}.` });
+        throw new NotFoundError('Карточка не найдена с указанным id.');
       }
       res.send(card);
     })
     .catch((err) => {
-      throwErrors(err, res, message);
+      next(err);
     });
 };
+
 module.exports = {
   getCards,
   createCard,
