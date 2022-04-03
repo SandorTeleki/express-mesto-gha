@@ -6,7 +6,13 @@ const auth = (req, res, next) => {
   if (!token) {
     throw new UnauthorizedError('Необходима авторизация.');
   }
-  req.user = jwt.verify(token, 'some-secret-key');
+  let payload;
+  try {
+    payload = jwt.verify(token, 'some-secret-key');
+  } catch (e) {
+    next(new UnauthorizedError('Необходима авторизация.'));
+  }
+  req.user = payload;
   next();
 };
 

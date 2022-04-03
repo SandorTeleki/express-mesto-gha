@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
+const BadRequestError = require('../errors/BadRequestError');
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -16,6 +17,7 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
+    .orFail(() => next(new BadRequestError('Ошибка валидации.')))
     .then((card) => {
       res.send(card);
     })
