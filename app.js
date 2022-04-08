@@ -17,6 +17,7 @@ const cardRouter = require('./routes/cards');
 const login = require('./controllers/login');
 const { createUser } = require('./controllers/users');
 const auth = require('./middleware/auth');
+const { requestLogger, errorLogger } = require('./middleware/logger');
 
 async function start() {
   await mongoose.connect('mongodb://localhost:27017/mestodb', {
@@ -32,6 +33,14 @@ start()
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(cookieParser());
+    app.use(requestLogger);
+
+    app.get('/crash-test', () => {
+      setTimeout(() => {
+        throw new Error('Сервер сейчас упадёт');
+      }, 0);
+    });
+
     app.post('/signin', celebrate({
       body: Joi.object().keys({
         email: Joi.string().email().label('Email').required()
@@ -95,6 +104,7 @@ start()
     app.use(auth, (req, res, next) => {
       next(new NotFoundError('Маршрут не найден'));
     });
+    app.use(errorLogger);
     app.use((err, req, res, next) => {
       if (isCelebrateError(err)) {
         const errorBody = err.details.get('body') || err.details.get('params');
