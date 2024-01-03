@@ -12,6 +12,13 @@ Backend часть сервиса, с помощью которого польз
   
 Остальные директории вспомогательные, создаются при необходимости разработчиком
 
+### Технологии:    
+
+![Express](https://img.shields.io/badge/-Express-090909?style=for-the-badge&logo=Express)
+![Node.js](https://img.shields.io/badge/-Node.js-090909?style=for-the-badge&logo=Node.js)
+![MongoDB](https://img.shields.io/badge/-MongoDB-090909?style=for-the-badge&logo=MongoDB)
+![Postman](https://img.shields.io/badge/-Postman-090909?style=for-the-badge&logo=Postman)
+
 ### Запуск проекта
 
 1. Клонировать репозиторий:  
@@ -38,6 +45,13 @@ Backend part of the service (Project Mesto) through which the user can share the
 `/models` - folder with files of user and card schemes description.  
   
 Other directories are auxiliary, created when needed.
+
+### Technologies:  
+
+![Express](https://img.shields.io/badge/-Express-090909?style=for-the-badge&logo=Express)
+![Node.js](https://img.shields.io/badge/-Node.js-090909?style=for-the-badge&logo=Node.js)
+![MongoDB](https://img.shields.io/badge/-MongoDB-090909?style=for-the-badge&logo=MongoDB)
+![Postman](https://img.shields.io/badge/-Postman-090909?style=for-the-badge&logo=Postman)
 
 ### Project Startup
 
